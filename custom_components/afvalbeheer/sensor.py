@@ -604,7 +604,7 @@ class WasteSensor(Entity):
     @property
     def device_class(self):
         """Return the device class."""
-        if self.date_object == True:
+        if self.date_object == True and self.date_only == True:
             return DEVICE_CLASS_TIMESTAMP
 
     @property
