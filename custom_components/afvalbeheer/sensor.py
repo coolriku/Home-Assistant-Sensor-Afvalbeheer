@@ -258,7 +258,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     dutch_days = config.get(CONF_TRANSLATE_DAYS)
     
     if date_object == True:
-        date_only = 1;
+        date_only = 1
     else:
         date_only = config.get(CONF_DATE_ONLY)
 
