@@ -250,13 +250,17 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     waste_collector = config.get(CONF_WASTE_COLLECTOR).lower()
     date_format = config.get(CONF_DATE_FORMAT)
     sensor_today = config.get(CONF_TODAY_TOMORROW)
-    date_only = config.get(CONF_DATE_ONLY)
     date_object = config.get(CONF_DATE_OBJECT)
     name = config.get(CONF_NAME)
     name_prefix = config.get(CONF_NAME_PREFIX)
     built_in_icons = config.get(CONF_BUILT_IN_ICONS)
     disable_icons = config.get(CONF_DISABLE_ICONS)
     dutch_days = config.get(CONF_TRANSLATE_DAYS)
+    
+    if date_object == True:
+        date_only = 1;
+    else:
+        date_only = config.get(CONF_DATE_ONLY)
 
     if waste_collector == "cure":
         _LOGGER.error("Afvalbeheer - Update your config to use Mijnafvalwijzer! You are still using Cure as a wast collector, which is deprecated. It's from now on; Mijnafvalwijzer. Check your automations and lovelace config, as the sensor names may also be changed!")
@@ -604,7 +608,7 @@ class WasteSensor(Entity):
     @property
     def device_class(self):
         """Return the device class."""
-        if self.date_object == True and self.date_only == True:
+        if self.date_object == True:
             return DEVICE_CLASS_TIMESTAMP
 
     @property
@@ -637,7 +641,9 @@ class WasteSensor(Entity):
                         if (update_date == 0) or (update_date > int(pick_update.strftime('%Y%m%d'))):
                             self._sort_date = int(pick_update.strftime('%Y%m%d'))
                             update_date = self._sort_date
-                            if self.date_only and date_diff >= 0:
+                            if self.date_object:
+                                self._state = pick_update
+                            elif self.date_only and date_diff >= 0:
                                 self._state = pick_update.strftime(self.date_format)
                             else:
                                 if date_diff >= 8:
